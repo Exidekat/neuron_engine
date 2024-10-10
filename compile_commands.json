@@ -1,0 +1,8 @@
+[
+{
+  "directory": "/home/andy/neuron_engine/build",
+  "command": "/usr/bin/c++ -DNEURON_SHARED -DNEURON_SHARED_EXPORTS -Dneuron_EXPORTS -I/home/andy/neuron_engine/src -I/home/andy/neuron_engine/build/cfi -std=gnu++23 -fPIC -o CMakeFiles/neuron.dir/src/neuron/neuron.cpp.o -c /home/andy/neuron_engine/src/neuron/neuron.cpp",
+  "file": "/home/andy/neuron_engine/src/neuron/neuron.cpp",
+  "output": "CMakeFiles/neuron.dir/src/neuron/neuron.cpp.o"
+}
+]
