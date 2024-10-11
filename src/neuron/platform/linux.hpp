@@ -6,7 +6,7 @@ namespace neuron {
     protected:
         LinuxPlatform();
     public:
-        virtual ~LinuxPlatform();
+        ~LinuxPlatform() override;
     };
 }
 #endif

@@ -25,7 +25,9 @@ namespace neuron {
 
         virtual std::shared_ptr<Window> create_window(const WindowDescription &description) = 0;
 
-        static std::shared_ptr<Platform> get();
+        virtual void run_event_loop() = 0;
+
+        static const std::unique_ptr<Platform> &get();
 
         static void init();
         static void cleanup();
@@ -38,7 +40,7 @@ namespace neuron {
       public:
         virtual ~Window();
 
-        static std::shared_ptr<Window> create_window(const WindowDescription &description);
+        static std::shared_ptr<Window> create(const WindowDescription &description);
 
 
       private:

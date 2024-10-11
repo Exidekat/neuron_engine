@@ -2,13 +2,13 @@
 
 namespace neuron {
     namespace detail {
-        std::shared_ptr<Platform> platform;
+        std::unique_ptr<Platform> platform;
 
-        extern std::shared_ptr<Platform> create_win32_platform();
-        extern std::shared_ptr<Platform> create_linux_platform();
+        extern std::unique_ptr<Platform> create_win32_platform();
+        extern std::unique_ptr<Platform> create_linux_platform();
     }
 
-    std::shared_ptr<Platform> Platform::get() {
+    const std::unique_ptr<Platform> &Platform::get() {
         return detail::platform;
     }
 
@@ -22,14 +22,16 @@ namespace neuron {
 #endif
     }
 
-    void Platform::cleanup() {}
+    void Platform::cleanup() {
+        detail::platform.reset();
+    }
 
     Window::Window() = default;
 
     Window::~Window() = default;
 
 
-    std::shared_ptr<Window> Window::create_window(const WindowDescription &description) {
+    std::shared_ptr<Window> Window::create(const WindowDescription &description) {
         return Platform::get()->create_window(description);
     }
 } // namespace neuron

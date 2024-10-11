@@ -1,3 +1,4 @@
+#pragma once
 #include "neuron/cfg.hpp"
 
 #ifdef WIN32

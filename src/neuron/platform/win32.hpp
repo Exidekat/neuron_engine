@@ -4,7 +4,7 @@
 #ifdef WIN32
 
 namespace neuron {
-    class NEURON_API Win32Platform : public Platform {
+    class NEURON_API Win32Platform final : public Platform {
       public:
         Win32Platform();
         ~Win32Platform() override;
