@@ -14,7 +14,7 @@ namespace neuron {
 
     Win32Platform::~Win32Platform() {}
 
-    std::shared_ptr<Window> Win32Platform::create_window(const WindowDescription &description) {
+    std::weak_ptr<Window> Win32Platform::create_window(const WindowDescription &description) {
         return {};
     }
 } // namespace neuron

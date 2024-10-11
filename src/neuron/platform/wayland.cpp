@@ -5,7 +5,7 @@ namespace neuron {
 
     WaylandPlatform::WaylandPlatform() = default;
 
-    std::shared_ptr<Window> WaylandPlatform::create_window(const WindowDescription &description) {
+    std::weak_ptr<Window> WaylandPlatform::create_window(const WindowDescription &description) {
         return {};
     }
 

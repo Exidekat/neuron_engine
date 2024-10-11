@@ -8,7 +8,7 @@ namespace neuron {
       public:
         WaylandPlatform();
 
-        std::shared_ptr<Window> create_window(const WindowDescription &description) override;
+        std::weak_ptr<Window> create_window(const WindowDescription &description) override;
 
         void run_event_loop() override;
     };

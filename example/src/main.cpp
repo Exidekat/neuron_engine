@@ -1,4 +1,3 @@
-
 #include "neuron/neuron.hpp"
 #include "neuron/platform/generic.hpp"
 
@@ -9,8 +8,15 @@ void run() {
     auto window = neuron::Window::create(neuron::WindowDescription{
         .title     = "Hello!",
         .size      = {800, 600},
-        .position  = std::nullopt,
+        .placement = neuron::WindowCenterMonitor{0},
         .resizable = false,
+    });
+
+    auto window2 = neuron::Window::create(neuron::WindowDescription{
+        .title     = "Hello 2!",
+        .size      = {800, 600},
+        .placement = neuron::WindowCenterMonitor{1},
+        .resizable = true,
     });
 
     neuron::Platform::get()->run_event_loop();

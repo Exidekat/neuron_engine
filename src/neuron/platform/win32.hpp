@@ -9,7 +9,7 @@ namespace neuron {
         Win32Platform();
         ~Win32Platform() override;
 
-        std::shared_ptr<Window> create_window(const WindowDescription &description) override;
+        std::weak_ptr<Window> create_window(const WindowDescription &description) override;
     };
 } // namespace neuron
 

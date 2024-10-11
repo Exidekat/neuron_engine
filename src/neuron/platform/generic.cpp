@@ -31,7 +31,7 @@ namespace neuron {
     Window::~Window() = default;
 
 
-    std::shared_ptr<Window> Window::create(const WindowDescription &description) {
+    std::weak_ptr<Window> Window::create(const WindowDescription &description) {
         return Platform::get()->create_window(description);
     }
 } // namespace neuron
