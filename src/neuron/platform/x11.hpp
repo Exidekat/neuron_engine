@@ -9,7 +9,7 @@
 #include <X11/extensions/Xrandr.h>
 
 namespace neuron {
-    class X11Platform : public LinuxPlatform {
+    class NEURON_API X11Platform : public LinuxPlatform {
       public:
          X11Platform();
         ~X11Platform() override;

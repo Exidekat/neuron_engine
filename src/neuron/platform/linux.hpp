@@ -2,7 +2,7 @@
 #include "generic.hpp"
 #ifdef __unix__
 namespace neuron {
-    class LinuxPlatform : public Platform {
+    class NEURON_API LinuxPlatform : public Platform {
     protected:
         LinuxPlatform();
     public:

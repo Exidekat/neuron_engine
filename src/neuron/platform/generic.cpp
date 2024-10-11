@@ -23,4 +23,13 @@ namespace neuron {
     }
 
     void Platform::cleanup() {}
-}
+
+    Window::Window() = default;
+
+    Window::~Window() = default;
+
+
+    std::shared_ptr<Window> Window::create_window(const WindowDescription &description) {
+        return Platform::get()->create_window(description);
+    }
+} // namespace neuron

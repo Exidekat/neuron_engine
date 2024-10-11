@@ -3,10 +3,17 @@
 #include "neuron/neuron.hpp"
 #include "neuron/platform/generic.hpp"
 
-int main() {
-    neuron::Platform::init();
+#include <iostream>
+#include <ostream>
 
-    neuron::Platform::cleanup();
+int main() {
+    try {
+        neuron::Platform::init();
+
+        neuron::Platform::cleanup();
+    } catch (const std::exception& e) {
+        std::cerr << e.what() << std::endl;
+    }
 
     return 0;
 }

@@ -1,3 +1,4 @@
+#ifdef __unix__
 #include "wayland.hpp"
 
 namespace neuron {
@@ -8,3 +9,4 @@ namespace neuron {
         return {};
     }
 } // namespace neuron
+#endif

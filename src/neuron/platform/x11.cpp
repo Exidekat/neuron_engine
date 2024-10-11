@@ -1,3 +1,4 @@
+#ifdef __unix__
 #include "x11.hpp"
 
 #include <iostream>
@@ -80,3 +81,4 @@ namespace neuron {
         throw std::runtime_error("Mode not found");
     }
 } // namespace neuron
+#endif

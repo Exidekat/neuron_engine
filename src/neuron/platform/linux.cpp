@@ -1,3 +1,4 @@
+#ifdef __unix__
 #include "linux.hpp"
 #include "x11.hpp"
 #include "wayland.hpp"
@@ -27,3 +28,4 @@ namespace neuron {
 
     LinuxPlatform::~LinuxPlatform() {}
 } // namespace neuron
+#endif
