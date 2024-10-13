@@ -17,6 +17,16 @@ namespace neuron {
     std::weak_ptr<Window> Win32Platform::create_window(const WindowDescription &description) {
         return {};
     }
+
+    size_t Win32Platform::get_window_count() const {
+        return 0;
+    }
+
+    void Win32Platform::run_event_loop() {
+    }
+
+    void Win32Platform::step_event_loop() {
+    }
 } // namespace neuron
 
 #else

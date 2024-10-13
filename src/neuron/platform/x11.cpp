@@ -42,6 +42,10 @@ namespace neuron {
         return window;
     }
 
+    size_t X11Platform::get_window_count() const {
+        return m_open_windows.size();
+    }
+
     glm::ivec2 X11Platform::get_default_window_position(const glm::uvec2 &size, const uint32_t target_monitor) const {
         if (!m_screen_resources) {
             return {0, 0}; // screen resources weren't successfully queried.
@@ -73,117 +77,18 @@ namespace neuron {
         XEvent event;
         while (!m_open_windows.empty()) {
             XNextEvent(m_display, &event);
-            switch (event.type) {
-            case KeyPress:
-                _on_key_press(event.xkey);
-                break;
-            case KeyRelease:
-                _on_key_release(event.xkey);
-                break;
-            case ButtonPress:
-                _on_button_press(event.xbutton);
-                break;
-            case ButtonRelease:
-                _on_button_release(event.xbutton);
-                break;
-            case MotionNotify:
-                _on_motion_notify(event.xmotion);
-                break;
-            case EnterNotify:
-                _on_enter_notify(event.xcrossing);
-                break;
-            case LeaveNotify:
-                _on_leave_notify(event.xcrossing);
-                break;
-            case FocusIn:
-                _on_focus_in(event.xfocus);
-                break;
-            case FocusOut:
-                _on_focus_out(event.xfocus);
-                break;
-            case KeymapNotify:
-                _on_keymap_notify(event.xkeymap);
-                break;
-            case Expose:
-                _on_expose(event.xexpose);
-                break;
-            case GraphicsExpose:
-                _on_graphics_expose(event.xgraphicsexpose);
-                break;
-            case NoExpose:
-                _on_no_expose(event.xnoexpose);
-                break;
-            case VisibilityNotify:
-                _on_visibility_notify(event.xvisibility);
-                break;
-            case CreateNotify:
-                _on_create_notify(event.xcreatewindow);
-                break;
-            case DestroyNotify:
-                _on_destroy_notify(event.xdestroywindow);
-                break;
-            case UnmapNotify:
-                _on_unmap_notify(event.xunmap);
-                break;
-            case MapNotify:
-                _on_map_notify(event.xmap);
-                break;
-            case MapRequest:
-                _on_map_request(event.xmaprequest);
-                break;
-            case ReparentNotify:
-                _on_reparent_notify(event.xreparent);
-                break;
-            case ConfigureNotify:
-                _on_configure_notify(event.xconfigure);
-                break;
-            case ConfigureRequest:
-                _on_configure_request(event.xconfigurerequest);
-                break;
-            case GravityNotify:
-                _on_gravity_notify(event.xgravity);
-                break;
-            case ResizeRequest:
-                _on_resize_request(event.xresizerequest);
-                break;
-            case CirculateNotify:
-                _on_circulate_notify(event.xcirculate);
-                break;
-            case CirculateRequest:
-                _on_circulate_request(event.xcirculaterequest);
-                break;
-            case PropertyNotify:
-                _on_property_notify(event.xproperty);
-                break;
-            case SelectionClear:
-                _on_selection_clear(event.xselectionclear);
-                break;
-            case SelectionRequest:
-                _on_selection_request(event.xselectionrequest);
-                break;
-            case SelectionNotify:
-                _on_selection_notify(event.xselection);
-                break;
-            case ColormapNotify:
-                _on_colormap_notify(event.xcolormap);
-                break;
-            case ClientMessage:
-                _on_client_message(event.xclient);
-                break;
-            case MappingNotify:
-                _on_mapping_notify(event.xmapping);
-                break;
-            case GenericEvent:
-                _on_generic_event(event.xgeneric);
-                break;
-            default:
-                if (event.type == m_randr_event_base + RRNotify)
-                    _on_randr_notify(*reinterpret_cast<XRRNotifyEvent *>(&event));
-                else if (event.type == m_randr_event_base + RRScreenChangeNotify)
-                    _on_randr_screen_change_notify(*reinterpret_cast<XRRScreenChangeNotifyEvent *>(&event));
-                break;
-            }
+            _handle_event(event);
         }
+    }
+
+    void X11Platform::step_event_loop() {
+        XEvent event;
+        XPending(m_display);
+        while (XQLength(m_display)) {
+            XNextEvent(m_display, &event);
+            _handle_event(event);
+        }
+        XFlush(m_display);
     }
 
     Atom X11Platform::intern_atom(const std::string &text, const bool create_not_exists) const {
@@ -250,6 +155,116 @@ namespace neuron {
         return point.x >= crtc_info->x && point.y >= crtc_info->y && point.x <= crtc_info->x + crtc_info->width && point.y <= crtc_info->y + crtc_info->height;
     }
 
+    void X11Platform::_handle_event(const XEvent &event) {
+        switch (event.type) {
+        case KeyPress:
+            _on_key_press(event.xkey);
+            break;
+        case KeyRelease:
+            _on_key_release(event.xkey);
+            break;
+        case ButtonPress:
+            _on_button_press(event.xbutton);
+            break;
+        case ButtonRelease:
+            _on_button_release(event.xbutton);
+            break;
+        case MotionNotify:
+            _on_motion_notify(event.xmotion);
+            break;
+        case EnterNotify:
+            _on_enter_notify(event.xcrossing);
+            break;
+        case LeaveNotify:
+            _on_leave_notify(event.xcrossing);
+            break;
+        case FocusIn:
+            _on_focus_in(event.xfocus);
+            break;
+        case FocusOut:
+            _on_focus_out(event.xfocus);
+            break;
+        case KeymapNotify:
+            _on_keymap_notify(event.xkeymap);
+            break;
+        case Expose:
+            _on_expose(event.xexpose);
+            break;
+        case GraphicsExpose:
+            _on_graphics_expose(event.xgraphicsexpose);
+            break;
+        case NoExpose:
+            _on_no_expose(event.xnoexpose);
+            break;
+        case VisibilityNotify:
+            _on_visibility_notify(event.xvisibility);
+            break;
+        case CreateNotify:
+            _on_create_notify(event.xcreatewindow);
+            break;
+        case DestroyNotify:
+            _on_destroy_notify(event.xdestroywindow);
+            break;
+        case UnmapNotify:
+            _on_unmap_notify(event.xunmap);
+            break;
+        case MapNotify:
+            _on_map_notify(event.xmap);
+            break;
+        case MapRequest:
+            _on_map_request(event.xmaprequest);
+            break;
+        case ReparentNotify:
+            _on_reparent_notify(event.xreparent);
+            break;
+        case ConfigureNotify:
+            _on_configure_notify(event.xconfigure);
+            break;
+        case ConfigureRequest:
+            _on_configure_request(event.xconfigurerequest);
+            break;
+        case GravityNotify:
+            _on_gravity_notify(event.xgravity);
+            break;
+        case CirculateNotify:
+            _on_circulate_notify(event.xcirculate);
+            break;
+        case CirculateRequest:
+            _on_circulate_request(event.xcirculaterequest);
+            break;
+        case PropertyNotify:
+            _on_property_notify(event.xproperty);
+            break;
+        case SelectionClear:
+            _on_selection_clear(event.xselectionclear);
+            break;
+        case SelectionRequest:
+            _on_selection_request(event.xselectionrequest);
+            break;
+        case SelectionNotify:
+            _on_selection_notify(event.xselection);
+            break;
+        case ColormapNotify:
+            _on_colormap_notify(event.xcolormap);
+            break;
+        case ClientMessage:
+            _on_client_message(event.xclient);
+            break;
+        case MappingNotify:
+            _on_mapping_notify(event.xmapping);
+            break;
+        case GenericEvent:
+            _on_generic_event(event.xgeneric);
+            break;
+        default:
+            if (event.type == m_randr_event_base + RRNotify)
+                _on_randr_notify(*reinterpret_cast<const XRRNotifyEvent *>(&event));
+            else if (event.type == m_randr_event_base + RRScreenChangeNotify)
+                _on_randr_screen_change_notify(*reinterpret_cast<const XRRScreenChangeNotifyEvent *>(&event));
+            break;
+        }
+    }
+
     void X11Platform::_on_key_press(const XKeyPressedEvent &e) {}
 
     void X11Platform::_on_key_release(const XKeyReleasedEvent &e) {}
@@ -290,13 +305,16 @@ namespace neuron {
 
     void X11Platform::_on_reparent_notify(const XReparentEvent &e) {}
 
-    void X11Platform::_on_configure_notify(const XConfigureEvent &e) {}
+    void X11Platform::_on_configure_notify(const XConfigureEvent &e) {
+        if (const auto it = m_window_map.find(e.window); it != m_window_map.end()) {
+            const auto window = it->second;
+            window->_try_on_resize({static_cast<uint32_t>(e.width), static_cast<uint32_t>(e.height)});
+        }
+    }
 
     void X11Platform::_on_configure_request(const XConfigureRequestEvent &e) {}
 
     void X11Platform::_on_gravity_notify(const XGravityEvent &e) {}
-
-    void X11Platform::_on_resize_request(const XResizeRequestEvent &e) {}
 
     void X11Platform::_on_circulate_notify(const XCirculateEvent &e) {}
 
@@ -314,8 +332,17 @@ namespace neuron {
 
     void X11Platform::_on_client_message(const XClientMessageEvent &e) {
         if (e.message_type == m_atom_wm_protocols && e.format == 32 && e.data.l[0] == m_atom_wm_delete_window) {
-            m_open_windows.erase(e.window);
-            m_window_map[e.window]->close();
+            if (const auto it = m_window_map.find(e.window); it != m_window_map.end()) {
+                bool       close  = true;
+                const auto window = it->second;
+                window->call_close_request_callback(&close);
+
+                if (close) {
+                    m_open_windows.erase(e.window);
+                    m_window_map.erase(e.window);
+                    window->call_close_callback();
+                }
+            }
         }
     }
 
@@ -356,7 +383,8 @@ namespace neuron {
     }
 
     void X11Platform::_update_screen_resources() {
-        if (m_screen_resources) XRRFreeScreenResources(m_screen_resources);
+        if (m_screen_resources)
+            XRRFreeScreenResources(m_screen_resources);
         m_screen_resources = XRRGetScreenResources(m_display, m_root_window);
     }
 
@@ -382,8 +410,8 @@ namespace neuron {
         XSetWindowAttributes swa{};
         // just give me all my shit
         swa.event_mask = ExposureMask | KeyPressMask | KeyReleaseMask | ButtonMotionMask | ButtonPressMask | ButtonReleaseMask | EnterWindowMask | LeaveWindowMask |
-            StructureNotifyMask | SubstructureNotifyMask | SubstructureRedirectMask | VisibilityChangeMask | ResizeRedirectMask | FocusChangeMask | PropertyChangeMask |
-            ColormapChangeMask | OwnerGrabButtonMask;
+            StructureNotifyMask | SubstructureNotifyMask | SubstructureRedirectMask | VisibilityChangeMask | FocusChangeMask | PropertyChangeMask | ColormapChangeMask |
+            OwnerGrabButtonMask;
 
         m_window = XCreateWindow(platform->display(), platform->root_window(), pos.x, pos.y, description.size.x, description.size.y, 0, XDefaultDepthOfScreen(platform->screen()),
                                  InputOutput, XDefaultVisualOfScreen(platform->screen()), CWEventMask, &swa);
@@ -414,13 +442,19 @@ namespace neuron {
     }
 
     X11Window::~X11Window() {
-        close();
+        XDestroyWindow(_get_platform()->display(), m_window);
     }
 
-    void X11Window::close() {
-        if (m_open) {
-            XDestroyWindow(_get_platform()->display(), m_window);
-            m_open = false;
+    glm::uvec2 X11Window::get_inner_size() const {
+        XWindowAttributes attribs;
+        XGetWindowAttributes(_get_platform()->display(), m_window, &attribs);
+        return {static_cast<uint32_t>(attribs.width), static_cast<uint32_t>(attribs.height)};
+    }
+
+    void X11Window::_try_on_resize(const glm::uvec2 &new_size) {
+        if (new_size.x != m_cached_size.x || new_size.y != m_cached_size.y) {
+            call_resize_callback(new_size);
+            m_cached_size = new_size;
         }
     }
 } // namespace neuron

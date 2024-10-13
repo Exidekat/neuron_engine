@@ -18,7 +18,9 @@ namespace neuron {
         ~X11Platform() override;
 
         std::weak_ptr<Window> create_window(const WindowDescription &description) override;
+        [[nodiscard]] size_t  get_window_count() const override;
         void                  run_event_loop() override;
+        void                  step_event_loop() override;
 
         [[nodiscard]] inline Display *display() const noexcept { return m_display; }
 
@@ -54,6 +56,7 @@ namespace neuron {
         RROutput           _get_primary_output() const;
         const XRRModeInfo &_get_mode_info(RRMode mode) const;
         bool               _output_contains_point(RROutput output, const glm::ivec2 &point) const;
+        void               _handle_event(const XEvent &event);
 
         // Event Loop Handlers
         void _on_key_press(const XKeyPressedEvent &e);
@@ -79,7 +82,6 @@ namespace neuron {
         void _on_configure_notify(const XConfigureEvent &e);
         void _on_configure_request(const XConfigureRequestEvent &e);
         void _on_gravity_notify(const XGravityEvent &e);
-        void _on_resize_request(const XResizeRequestEvent &e);
         void _on_circulate_notify(const XCirculateEvent &e);
         void _on_circulate_request(const XCirculateRequestEvent &e);
         void _on_property_notify(const XPropertyEvent &e);
@@ -107,13 +109,15 @@ namespace neuron {
       public:
         ~X11Window() override;
 
-        void close();
+        glm::uvec2 get_inner_size() const override;
 
-        [[nodiscard]] inline ::Window x11_handle() const { return m_window; };
+        [[nodiscard]] inline ::Window x11_handle() const { return m_window; }
 
       private:
         ::Window m_window;
-        bool     m_open = true;
+        glm::uvec2 m_cached_size;
+
+        void _try_on_resize(const glm::uvec2& new_size);
     };
 } // namespace neuron
 #endif

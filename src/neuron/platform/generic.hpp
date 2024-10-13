@@ -3,12 +3,36 @@
 #include "neuron/pre.hpp"
 #include "neuron/utils.hpp"
 
+#include <functional>
 #include <memory>
 #include <optional>
 #include <string>
 #include <variant>
 
 #include <glm/glm.hpp>
+
+
+#define CALLBACKF(N, ...)                                                                                                                                                          \
+  public:                                                                                                                                                                          \
+    using F_##N = void(__VA_ARGS__);                                                                                                                                               \
+    inline void set_on_##N(const std::function<void(__VA_ARGS__)> &f) {                                                                                                                        \
+        m_on_##N = f;                                                                                                                                                              \
+    };                                                                                                                                                                             \
+    inline void unset_on_##N() {                                                                                                                                                   \
+        m_on_##N = std::nullopt;                                                                                                                                                   \
+    };                                                                                                                                                                             \
+                                                                                                                                                                                   \
+  protected:                                                                                                                                                                       \
+    template <typename... Args>                                                                                                                                                    \
+    inline void call_##N##_callback(Args... a) {                                                                                                                                   \
+        if (m_on_##N.has_value())                                                                                                                                                  \
+            (*m_on_##N)(a...);                                                                                                                                                     \
+    };                                                                                                                                                                             \
+                                                                                                                                                                                   \
+  private:                                                                                                                                                                         \
+    std::optional<std::function<F_##N>> m_on_##N = std::nullopt;                                                                                                                   \
+                                                                                                                                                                                   \
+  public:
 
 namespace neuron {
     class Window;
@@ -25,7 +49,7 @@ namespace neuron {
 
     using WindowPlacement = std::variant<std::monostate, WindowFixedPosition, WindowCenterMonitor, WindowCenterHoveredMonitor>;
 
-    constexpr auto WINDOW_PLACEMENT_USE_DEFAULT = std::monostate{};
+    constexpr auto WINDOW_PLACEMENT_USE_DEFAULT            = std::monostate{};
     constexpr auto WINDOW_PLACEMENT_CENTER_HOVERED_MONITOR = WindowCenterHoveredMonitor{};
 
     enum class WindowPlacementMethod : size_t {
@@ -48,8 +72,10 @@ namespace neuron {
         virtual ~Platform() = default;
 
         virtual std::weak_ptr<Window> create_window(const WindowDescription &description) = 0;
+        [[nodiscard]] virtual size_t  get_window_count() const                            = 0;
 
-        virtual void run_event_loop() = 0;
+        virtual void run_event_loop()  = 0;
+        virtual void step_event_loop() = 0;
 
         static const std::unique_ptr<Platform> &get();
 
@@ -73,6 +99,12 @@ namespace neuron {
          */
         static std::weak_ptr<Window> create(const WindowDescription &description);
 
-      private:
+        virtual glm::uvec2 get_inner_size() const = 0;
+
+        CALLBACKF(resize, const glm::uvec2 &new_size);
+        CALLBACKF(close_request, bool *close);
+        CALLBACKF(close);
     };
 } // namespace neuron
+
+#undef CALLBACKF
