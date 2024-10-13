@@ -7,6 +7,17 @@ set(NEURON_GLSLC_PATH "" CACHE STRING "Custom path to the glslc executable")
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+include(FetchContent)
+
+set(O_BSL ${BUILD_SHARED_LIBS})
+set(BUILD_SHARED_LIBS OFF)
+FetchContent_Declare(glm
+        GIT_REPOSITORY https://github.com/g-truc/glm.git
+        GIT_TAG 1.0.1)
+FetchContent_MakeAvailable(glm)
+set(BUILD_SHARED_LIBS ${O_BSL})
+unset(O_BSL)
+
 file(GLOB_RECURSE SRCS CONFIGURE_DEPENDS src/*.c src/*.cpp src/*.cxx src/*.s src/*.cc)
 
 file(GLOB_RECURSE CFG_FILE_INPUTS CONFIGURE_DEPENDS cfi/*.in)
@@ -21,6 +32,8 @@ endforeach()
 add_library(neuron ${SRCS})
 target_include_directories(neuron PUBLIC src/) # TODO: consider using an include/ folder which contains the interface and changing the src folder to PRIVATE
 target_include_directories(neuron PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/cfi)
+target_link_libraries(neuron PUBLIC glm::glm)
+target_compile_definitions(neuron PUBLIC -DGLM_ENABLE_EXPERIMENTAL)
 
 if (UNIX)
     target_link_libraries(neuron PUBLIC X11 Xrandr Xinerama Xi Xcursor)

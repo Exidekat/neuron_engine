@@ -52,15 +52,18 @@ namespace neuron {
         std::unordered_set<::Window>                             m_open_windows;
         std::unordered_map<::Window, std::shared_ptr<X11Window>> m_window_map;
 
+        KeyCode m_keycodes[256];
+        bool    m_xkb_auto_repeat_detectable = false;
+
         glm::ivec2         _get_default_window_position(const glm::uvec2 &size, RROutput output) const;
         RROutput           _get_primary_output() const;
         const XRRModeInfo &_get_mode_info(RRMode mode) const;
         bool               _output_contains_point(RROutput output, const glm::ivec2 &point) const;
-        void               _handle_event(const XEvent &event);
+        void               _handle_event(XEvent &event);
 
         // Event Loop Handlers
-        void _on_key_press(const XKeyPressedEvent &e);
-        void _on_key_release(const XKeyReleasedEvent &e);
+        void _on_key_press(const XKeyPressedEvent &e, bool filtered, unsigned int scancode);
+        void _on_key_release(const XKeyReleasedEvent &e, bool filtered, unsigned int scancode);
         void _on_button_press(const XButtonPressedEvent &e);
         void _on_button_release(const XButtonReleasedEvent &e);
         void _on_motion_notify(const XMotionEvent &e);
@@ -93,8 +96,8 @@ namespace neuron {
         void _on_mapping_notify(const XMappingEvent &e);
         void _on_generic_event(const XGenericEvent &e);
 
-        void _on_randr_notify(const XRRNotifyEvent &e);
-        void _on_randr_screen_change_notify(const XRRScreenChangeNotifyEvent &e);
+        void _on_randr_notify(XRRNotifyEvent &e);
+        void _on_randr_screen_change_notify(XRRScreenChangeNotifyEvent &e);
         void _on_randr_crtc_change_notify(const XRRCrtcChangeNotifyEvent &e);
         void _on_randr_output_change_notify(const XRROutputChangeNotifyEvent &e);
         void _on_randr_output_property_notify(const XRROutputPropertyNotifyEvent &e);
@@ -111,13 +114,20 @@ namespace neuron {
 
         glm::uvec2 get_inner_size() const override;
 
+        void trigger_close() override;
+
         [[nodiscard]] inline ::Window x11_handle() const { return m_window; }
 
       private:
-        ::Window m_window;
+        ::Window   m_window;
         glm::uvec2 m_cached_size;
 
-        void _try_on_resize(const glm::uvec2& new_size);
+        Time m_key_timings[256];
+        bool m_current_keystate[256];
+
+        void _try_on_resize(const glm::uvec2 &new_size);
+        void _on_key_press(const XKeyPressedEvent &e, bool filtered, unsigned int scancode, KeyCode keycode);
+        void _on_key_release(const XKeyPressedEvent &e, bool filtered, unsigned int scancode, KeyCode keycode);
     };
 } // namespace neuron
 #endif

@@ -1,13 +1,66 @@
+#include <cstring>
 #ifdef __unix__
 #include "x11.hpp"
 
 #include <glm/gtx/string_cast.hpp>
 #include <iostream>
 
+#include <X11/keysym.h>
+
+#include <X11/XKBlib.h>
+
 namespace neuron {
     inline X11Platform *_get_platform() {
         return dynamic_cast<X11Platform *>(Platform::get().get());
     }
+
+    constexpr uint32_t _kn(const char s[4]) {
+        return static_cast<uint32_t>(s[3]) << 24 | static_cast<uint32_t>(s[2]) << 16 | static_cast<uint32_t>(s[1]) << 8 | static_cast<uint32_t>(s[0]);
+    }
+
+    struct KNS {
+        char s[4];
+
+        constexpr KNS(char const (&p)[1]) {
+            s[0] = p[0];
+            s[1] = 0;
+            s[2] = 0;
+            s[3] = 0;
+        }
+
+        constexpr KNS(char const (&p)[2]) {
+            s[0] = p[0];
+            s[1] = p[1];
+            s[2] = 0;
+            s[3] = 0;
+        }
+
+        constexpr KNS(char const (&p)[3]) {
+            s[0] = p[0];
+            s[1] = p[1];
+            s[2] = p[2];
+            s[3] = 0;
+        }
+
+        constexpr KNS(char const (&p)[4]) {
+            s[0] = p[0];
+            s[1] = p[1];
+            s[2] = p[2];
+            s[3] = p[3];
+        }
+
+        constexpr KNS(char const (&p)[5]) {
+            s[0] = p[0];
+            s[1] = p[1];
+            s[2] = p[2];
+            s[3] = p[3];
+        }
+    };
+
+    template <KNS S>
+    constexpr uint32_t operator""_kn() {
+        return _kn(S.s);
+    };
 
     X11Platform::X11Platform() {
         m_display     = XOpenDisplay(nullptr);
@@ -29,6 +82,172 @@ namespace neuron {
         }
 
         XRRSelectInput(m_display, m_root_window, RRScreenChangeNotifyMask | RROutputPropertyNotifyMask | RROutputChangeNotifyMask | RRCrtcChangeNotifyMask);
+
+        // Keycodes
+        {
+#if XkbKeyNameLength == 4
+            // wild what you can do when the name length is 4 bytes
+            // also for reference the names here are from
+            std::unordered_map<uint32_t, KeyCode> name_mapping;
+            name_mapping["TLDE"_kn] = KeyCode::Grave;
+            name_mapping["AE01"_kn] = KeyCode::Num1;
+            name_mapping["AE02"_kn] = KeyCode::Num2;
+            name_mapping["AE03"_kn] = KeyCode::Num3;
+            name_mapping["AE04"_kn] = KeyCode::Num4;
+            name_mapping["AE05"_kn] = KeyCode::Num5;
+            name_mapping["AE06"_kn] = KeyCode::Num6;
+            name_mapping["AE07"_kn] = KeyCode::Num7;
+            name_mapping["AE08"_kn] = KeyCode::Num8;
+            name_mapping["AE09"_kn] = KeyCode::Num9;
+            name_mapping["AE10"_kn] = KeyCode::Num0;
+            name_mapping["AE11"_kn] = KeyCode::Hyphen;
+            name_mapping["AE12"_kn] = KeyCode::Equals;
+
+            name_mapping["AD01"_kn] = KeyCode::Q;
+            name_mapping["AD02"_kn] = KeyCode::W;
+            name_mapping["AD03"_kn] = KeyCode::E;
+            name_mapping["AD04"_kn] = KeyCode::R;
+            name_mapping["AD05"_kn] = KeyCode::T;
+            name_mapping["AD06"_kn] = KeyCode::Y;
+            name_mapping["AD07"_kn] = KeyCode::U;
+            name_mapping["AD08"_kn] = KeyCode::I;
+            name_mapping["AD09"_kn] = KeyCode::O;
+            name_mapping["AD10"_kn] = KeyCode::P;
+            name_mapping["AD11"_kn] = KeyCode::LeftBracket;
+            name_mapping["AD12"_kn] = KeyCode::RightBracket;
+
+            name_mapping["AC01"_kn] = KeyCode::A;
+            name_mapping["AC02"_kn] = KeyCode::S;
+            name_mapping["AC03"_kn] = KeyCode::D;
+            name_mapping["AC04"_kn] = KeyCode::F;
+            name_mapping["AC05"_kn] = KeyCode::G;
+            name_mapping["AC06"_kn] = KeyCode::H;
+            name_mapping["AC07"_kn] = KeyCode::J;
+            name_mapping["AC08"_kn] = KeyCode::K;
+            name_mapping["AC09"_kn] = KeyCode::L;
+            name_mapping["AC10"_kn] = KeyCode::Semicolon;
+            name_mapping["AC11"_kn] = KeyCode::Apostrophe;
+            name_mapping["BKSL"_kn] = KeyCode::Backslash;
+
+            name_mapping["AB01"_kn] = KeyCode::Z;
+            name_mapping["AB02"_kn] = KeyCode::X;
+            name_mapping["AB03"_kn] = KeyCode::C;
+            name_mapping["AB04"_kn] = KeyCode::V;
+            name_mapping["AB05"_kn] = KeyCode::B;
+            name_mapping["AB06"_kn] = KeyCode::N;
+            name_mapping["AB07"_kn] = KeyCode::M;
+            name_mapping["AB08"_kn] = KeyCode::Comma;
+            name_mapping["AB09"_kn] = KeyCode::Period;
+            name_mapping["AB10"_kn] = KeyCode::Slash;
+
+            name_mapping["LSGT"_kn] = KeyCode::World1;
+
+            name_mapping["ESC"_kn]  = KeyCode::Escape;
+            name_mapping["TAB"_kn]  = KeyCode::Tab;
+            name_mapping["CAPS"_kn] = KeyCode::CapsLock;
+            name_mapping["BKSP"_kn] = KeyCode::Backspace;
+            name_mapping["RTRN"_kn] = KeyCode::Enter;
+            name_mapping["SPCE"_kn] = KeyCode::Space;
+            name_mapping["LFSH"_kn] = KeyCode::LeftShift;
+            name_mapping["RTSH"_kn] = KeyCode::RightShift;
+            name_mapping["LCTL"_kn] = KeyCode::LeftControl;
+            name_mapping["RCTL"_kn] = KeyCode::RightControl;
+            name_mapping["LALT"_kn] = KeyCode::LeftAlt;
+            name_mapping["RALT"_kn] = KeyCode::RightAlt;
+            name_mapping["LWIN"_kn] = KeyCode::LeftSuper;
+            name_mapping["RWIN"_kn] = KeyCode::RightSuper;
+            name_mapping["MENU"_kn] = KeyCode::Menu;
+            name_mapping["PRSC"_kn] = KeyCode::PrintScreen;
+            name_mapping["SCLK"_kn] = KeyCode::ScrollLock;
+            name_mapping["PAUS"_kn] = KeyCode::Pause;
+            name_mapping["INS"_kn]  = KeyCode::Insert;
+            name_mapping["DELE"_kn] = KeyCode::Delete;
+            name_mapping["HOME"_kn] = KeyCode::Home;
+            name_mapping["END"_kn]  = KeyCode::End;
+            name_mapping["PGUP"_kn] = KeyCode::PageUp;
+            name_mapping["PGDN"_kn] = KeyCode::PageDown;
+            name_mapping["UP"_kn]   = KeyCode::Up;
+            name_mapping["DOWN"_kn] = KeyCode::Down;
+            name_mapping["LEFT"_kn] = KeyCode::Left;
+            name_mapping["RGHT"_kn] = KeyCode::Right;
+            name_mapping["NMLK"_kn] = KeyCode::NumLock;
+
+            name_mapping["FK01"_kn] = KeyCode::F1;
+            name_mapping["FK02"_kn] = KeyCode::F2;
+            name_mapping["FK03"_kn] = KeyCode::F3;
+            name_mapping["FK04"_kn] = KeyCode::F4;
+            name_mapping["FK05"_kn] = KeyCode::F5;
+            name_mapping["FK06"_kn] = KeyCode::F6;
+            name_mapping["FK07"_kn] = KeyCode::F7;
+            name_mapping["FK08"_kn] = KeyCode::F8;
+            name_mapping["FK09"_kn] = KeyCode::F9;
+            name_mapping["FK10"_kn] = KeyCode::F10;
+            name_mapping["FK11"_kn] = KeyCode::F11;
+            name_mapping["FK12"_kn] = KeyCode::F12;
+
+            name_mapping["KP7"_kn] = KeyCode::Numpad7;
+            name_mapping["KP8"_kn] = KeyCode::Numpad8;
+            name_mapping["KP9"_kn] = KeyCode::Numpad9;
+
+            name_mapping["KP4"_kn] = KeyCode::Numpad4;
+            name_mapping["KP5"_kn] = KeyCode::Numpad5;
+            name_mapping["KP6"_kn] = KeyCode::Numpad6;
+
+            name_mapping["KP1"_kn] = KeyCode::Numpad1;
+            name_mapping["KP2"_kn] = KeyCode::Numpad2;
+            name_mapping["KP3"_kn] = KeyCode::Numpad3;
+
+            name_mapping["KPEN"_kn] = KeyCode::NumpadEnter;
+            name_mapping["KPEQ"_kn] = KeyCode::NumpadEquals;
+            name_mapping["KP0"_kn]  = KeyCode::Numpad0;
+            name_mapping["KPDL"_kn] = KeyCode::NumpadPeriod;
+            name_mapping["KPPT"_kn] = KeyCode::NumpadPeriod;
+
+            name_mapping["KPDV"_kn] = KeyCode::NumpadDivide;
+            name_mapping["KPMU"_kn] = KeyCode::NumpadMultiply;
+            name_mapping["KPSU"_kn] = KeyCode::NumpadSubtract;
+            name_mapping["KPAD"_kn] = KeyCode::NumpadAdd;
+
+            name_mapping["LVL3"_kn] = KeyCode::RightAlt;
+            name_mapping["MDSW"_kn] = KeyCode::RightAlt;
+
+            XkbDescPtr desc = XkbGetMap(m_display, 0, XkbUseCoreKbd);
+            XkbGetNames(m_display, XkbKeyNamesMask | XkbKeyAliasesMask, desc);
+
+            const int minScancode = desc->min_key_code;
+            const int maxScancode = desc->max_key_code;
+
+            memset(m_keycodes, 0, sizeof(m_keycodes)); // m_keycodes is a sized array this should work
+
+            for (int sc = minScancode; sc <= maxScancode; ++sc) {
+                if (const auto it = name_mapping.find(_kn(desc->names->keys[sc].name)); it != name_mapping.end()) {
+                    m_keycodes[sc] = it->second;
+                    continue;
+                }
+
+                for (int i = 0; i < desc->names->num_key_aliases; ++i) {
+                    if (_kn(desc->names->key_aliases[i].real) != _kn(desc->names->keys[sc].name))
+                        continue;
+                    if (const auto it = name_mapping.find(_kn(desc->names->key_aliases[i].alias)); it != name_mapping.end()) {
+                        m_keycodes[sc] = it->second;
+                        break;
+                    }
+                }
+            }
+
+            XkbFreeNames(desc, XkbKeyNamesMask, true);
+            XkbFreeKeyboard(desc, 0, true);
+
+#else
+            // do it via strings
+            throw std::runtime_error("Xkb Key Name Mapping Via Strings not yet implemented");
+#endif
+        }
+
+        {
+            Bool s;
+            if (XkbSetDetectableAutoRepeat(m_display, true, &s)) if (s) m_xkb_auto_repeat_detectable = true;
+        }
     }
 
     X11Platform::~X11Platform() {
@@ -155,13 +374,18 @@ namespace neuron {
         return point.x >= crtc_info->x && point.y >= crtc_info->y && point.x <= crtc_info->x + crtc_info->width && point.y <= crtc_info->y + crtc_info->height;
     }
 
-    void X11Platform::_handle_event(const XEvent &event) {
+    void X11Platform::_handle_event(XEvent &event) {
+        unsigned int scancode = 0xFFFFFFFF;
+        if (event.type == KeyPress || event.type == KeyRelease)
+            scancode = event.xkey.keycode;
+        const bool filtered = XFilterEvent(&event, None);
+
         switch (event.type) {
         case KeyPress:
-            _on_key_press(event.xkey);
+            _on_key_press(event.xkey, filtered, scancode);
             break;
         case KeyRelease:
-            _on_key_release(event.xkey);
+            _on_key_release(event.xkey, filtered, scancode);
             break;
         case ButtonPress:
             _on_button_press(event.xbutton);
@@ -258,16 +482,41 @@ namespace neuron {
             break;
         default:
             if (event.type == m_randr_event_base + RRNotify)
-                _on_randr_notify(*reinterpret_cast<const XRRNotifyEvent *>(&event));
+                _on_randr_notify(*reinterpret_cast<XRRNotifyEvent *>(&event));
             else if (event.type == m_randr_event_base + RRScreenChangeNotify)
-                _on_randr_screen_change_notify(*reinterpret_cast<const XRRScreenChangeNotifyEvent *>(&event));
+                _on_randr_screen_change_notify(*reinterpret_cast<XRRScreenChangeNotifyEvent *>(&event));
             break;
         }
     }
 
-    void X11Platform::_on_key_press(const XKeyPressedEvent &e) {}
+    inline KeyCode _trsc(const unsigned int &sc, KeyCode const (&keycodes)[256]) {
+        if (sc > 255)
+            return KeyCode::Invalid;
+        return keycodes[sc];
+    }
 
-    void X11Platform::_on_key_release(const XKeyReleasedEvent &e) {}
+    inline KeyMods _trmods(const unsigned int state) {
+        return {.shift     = (state & ShiftMask) != 0,
+                .control   = (state & ControlMask) != 0,
+                .alt       = (state & Mod1Mask) != 0,
+                .super     = (state & Mod4Mask) != 0,
+                .caps_lock = (state & LockMask) != 0,
+                .num_lock  = (state & Mod2Mask) != 0};
+    }
+
+    void X11Platform::_on_key_press(const XKeyPressedEvent &e, const bool filtered, const unsigned int scancode) {
+        const KeyCode kc = _trsc(scancode, m_keycodes);
+        if (const auto it = m_window_map.find(e.window); it != m_window_map.end()) {
+            it->second->_on_key_press(e, filtered, scancode, kc);
+        }
+    }
+
+    void X11Platform::_on_key_release(const XKeyReleasedEvent &e, const bool filtered, const unsigned int scancode) {
+        const KeyCode kc = _trsc(scancode, m_keycodes);
+        if (const auto it = m_window_map.find(e.window); it != m_window_map.end()) {
+            it->second->_on_key_release(e, filtered, scancode, kc);
+        }
+    }
 
     void X11Platform::_on_button_press(const XButtonPressedEvent &e) {}
 
@@ -350,7 +599,9 @@ namespace neuron {
 
     void X11Platform::_on_generic_event(const XGenericEvent &e) {}
 
-    void X11Platform::_on_randr_notify(const XRRNotifyEvent &e) {
+    void X11Platform::_on_randr_notify(XRRNotifyEvent &e) {
+        XRRUpdateConfiguration(reinterpret_cast<XEvent *>(&e));
+
         switch (e.subtype) {
         case RRNotify_CrtcChange:
             _on_randr_crtc_change_notify(*reinterpret_cast<const XRRCrtcChangeNotifyEvent *>(&e));
@@ -366,7 +617,8 @@ namespace neuron {
         }
     }
 
-    void X11Platform::_on_randr_screen_change_notify(const XRRScreenChangeNotifyEvent &e) {
+    void X11Platform::_on_randr_screen_change_notify(XRRScreenChangeNotifyEvent &e) {
+        XRRUpdateConfiguration(reinterpret_cast<XEvent *>(&e));
         _update_screen_resources();
     }
 
@@ -439,6 +691,9 @@ namespace neuron {
 
         XSetWMNormalHints(platform->display(), m_window, hints);
         XFree(hints);
+
+        memset(m_current_keystate, 0, sizeof(m_current_keystate));
+        memset(m_key_timings, 0, sizeof(m_key_timings));
     }
 
     X11Window::~X11Window() {
@@ -451,11 +706,53 @@ namespace neuron {
         return {static_cast<uint32_t>(attribs.width), static_cast<uint32_t>(attribs.height)};
     }
 
+
+    void X11Window::trigger_close() {
+        XEvent e;
+        e.xclient.type = ClientMessage;
+        e.xclient.window = m_window;
+        e.xclient.message_type = _get_platform()->m_atom_wm_protocols;
+        e.xclient.format = 32;
+        e.xclient.data.l[0] = _get_platform()->m_atom_wm_delete_window;
+        e.xclient.data.l[1] = CurrentTime;
+        XSendEvent(_get_platform()->display(), m_window, false, NoEventMask, &e);
+    }
+
     void X11Window::_try_on_resize(const glm::uvec2 &new_size) {
         if (new_size.x != m_cached_size.x || new_size.y != m_cached_size.y) {
             call_resize_callback(new_size);
             m_cached_size = new_size;
         }
+    }
+
+    void X11Window::_on_key_press(const XKeyPressedEvent &e, const bool filtered, const unsigned int scancode, const KeyCode keycode) {
+        const KeyMods mods = _trmods(e.state);
+
+        if (const Time event_time_diff = e.time - m_key_timings[scancode];
+            event_time_diff == e.time || 0 < event_time_diff && event_time_diff < 0x80000000) { // avoid duplicate events
+            call_key_pressed_callback(keycode, mods, scancode, m_current_keystate[scancode]);
+            m_current_keystate[scancode] = true;
+        }
+
+        if (!filtered) {
+            // TODO: text input
+        }
+    }
+
+    void X11Window::_on_key_release(const XKeyPressedEvent &e, const bool filtered, const unsigned int scancode, const KeyCode keycode) {
+        const KeyMods mods = _trmods(e.state);
+
+        // we don't like repeats
+        if (!_get_platform()->m_xkb_auto_repeat_detectable) {
+            if (XEventsQueued(_get_platform()->m_display, QueuedAfterReading)) {
+                XEvent e2;
+                XPeekEvent(_get_platform()->m_display, &e2);
+                if (e2.type == KeyPress && e2.xkey.window == e.window && e2.xkey.keycode == scancode && e2.xkey.time - e.time < 20) return;
+            }
+        }
+
+        m_current_keystate[scancode] = false;
+        call_key_released_callback(keycode, mods, scancode);
     }
 } // namespace neuron
 #endif

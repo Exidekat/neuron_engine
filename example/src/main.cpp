@@ -14,27 +14,22 @@ void run() {
         .resizable = false,
     });
 
-    const auto window2 = neuron::Window::create(neuron::WindowDescription{
-        .title     = "Hello 2!",
-        .size      = {800, 600},
-        .placement = neuron::WindowCenterMonitor{1},
-        .resizable = true,
-    });
-
     window.lock()->set_on_resize([](const glm::uvec2& new_size) {
-        std::cout << "W1 Size: " << new_size.x << ", " << new_size.y << std::endl;
+        std::cout << "Size: " << new_size.x << ", " << new_size.y << std::endl;
     });
 
     window.lock()->set_on_close([] {
-        std::cout << "Close W1" << std::endl;
+        std::cout << "Close" << std::endl;
     });
 
-    window2.lock()->set_on_resize([](const glm::uvec2& new_size) {
-        std::cout << "W2 Size: " << new_size.x << ", " << new_size.y << std::endl;
+    window.lock()->set_on_key_pressed([](const neuron::KeyCode keycode, const neuron::KeyMods &mods, const unsigned int scancode, const bool is_repeat) {
+        std::cout << std::hex << static_cast<uint16_t>(keycode) << std::dec << " -- " << is_repeat << std::endl;
     });
 
-    window2.lock()->set_on_close([] {
-        std::cout << "Close W2" << std::endl;
+    window.lock()->set_on_key_released([window](const neuron::KeyCode keycode, const neuron::KeyMods& mods, const unsigned int scancode) {
+        if (keycode == neuron::KeyCode::Escape && mods.control) {
+            window.lock()->trigger_close();
+        }
     });
 
     using clock = std::chrono::high_resolution_clock;
