@@ -339,13 +339,26 @@ namespace neuron {
         }
     }
 
-    void X11Platform::_on_randr_screen_change_notify(const XRRScreenChangeNotifyEvent &e) {}
+    void X11Platform::_on_randr_screen_change_notify(const XRRScreenChangeNotifyEvent &e) {
+        _update_screen_resources();
+    }
 
-    void X11Platform::_on_randr_crtc_change_notify(const XRRCrtcChangeNotifyEvent &e) {}
+    void X11Platform::_on_randr_crtc_change_notify(const XRRCrtcChangeNotifyEvent &e) {
+        _update_screen_resources();
+    }
 
-    void X11Platform::_on_randr_output_change_notify(const XRROutputChangeNotifyEvent &e) {}
+    void X11Platform::_on_randr_output_change_notify(const XRROutputChangeNotifyEvent &e) {
+        _update_screen_resources();
+    }
 
-    void X11Platform::_on_randr_output_property_notify(const XRROutputPropertyNotifyEvent &e) {}
+    void X11Platform::_on_randr_output_property_notify(const XRROutputPropertyNotifyEvent &e) {
+        _update_screen_resources();
+    }
+
+    void X11Platform::_update_screen_resources() {
+        if (m_screen_resources) XRRFreeScreenResources(m_screen_resources);
+        m_screen_resources = XRRGetScreenResources(m_display, m_root_window);
+    }
 
     X11Window::X11Window(const WindowDescription &description) {
         const auto *platform = _get_platform();

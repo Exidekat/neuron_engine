@@ -96,6 +96,8 @@ namespace neuron {
         void _on_randr_crtc_change_notify(const XRRCrtcChangeNotifyEvent &e);
         void _on_randr_output_change_notify(const XRROutputChangeNotifyEvent &e);
         void _on_randr_output_property_notify(const XRROutputPropertyNotifyEvent &e);
+
+        void _update_screen_resources();
     };
 
     class NEURON_API X11Window final : public Window {

@@ -16,7 +16,7 @@ void run() {
         .title     = "Hello 2!",
         .size      = {800, 600},
         .placement = neuron::WindowCenterMonitor{1},
-        .resizable = true,
+        .resizable = false,
     });
 
     neuron::Platform::get()->run_event_loop();
