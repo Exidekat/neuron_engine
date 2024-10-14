@@ -694,6 +694,8 @@ namespace neuron {
 
         memset(m_current_keystate, 0, sizeof(m_current_keystate));
         memset(m_key_timings, 0, sizeof(m_key_timings));
+
+        m_cached_size = description.size;
     }
 
     X11Window::~X11Window() {

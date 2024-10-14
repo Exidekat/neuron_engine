@@ -263,6 +263,15 @@ namespace neuron {
         CALLBACKF(close);
         CALLBACKF(key_pressed, KeyCode keycode, const KeyMods &mods, unsigned int scancode, bool is_repeat);
         CALLBACKF(key_released, KeyCode keycode, const KeyMods &mods, unsigned int scancode);
+        CALLBACKF(button_pressed, unsigned int button, const glm::ivec2& pos, const KeyMods& mods);
+        CALLBACKF(button_released, unsigned int button, const glm::ivec2& pos, const KeyMods& mods);
+        CALLBACKF(mouse_moved, const glm::ivec2& old_position, const glm::ivec2& new_position, const glm::ivec2& delta);
+        CALLBACKF(character_typed, unsigned int unicode_codepoint); // needs to be long because keyboards and computers can generate characters which can't be represented by UTF-8 in a single byte.
+        CALLBACKF(mouse_enter);
+        CALLBACKF(mouse_leave);
+        CALLBACKF(focus);
+        CALLBACKF(unfocus);
+        CALLBACKF(scrolled, const glm::ivec2 &pos, const glm::ivec2 &scroll_delta);
     };
 
     inline constexpr bool is_key_ascii_compatible(const KeyCode &kc) {
