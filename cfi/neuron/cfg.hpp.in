@@ -1,0 +1,6 @@
+#pragma once
+
+#define NEURON_VERSION "@neuron_VERSION@"
+#define NEURON_VERSION_MAJOR @neuron_VERSION_MAJOR@
+#define NEURON_VERSION_MINOR @neuron_VERSION_MINOR@
+#define NEURON_VERSION_PATCH @neuron_VERSION_PATCH@
