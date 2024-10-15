@@ -1,7 +1,7 @@
 #include "win32.hpp"
 #include <stdexcept>
 #ifdef WIN32
-namespace neuron {
+namespace neuron::synapse {
     namespace detail {
         static auto CLASSNAME = "neuron_class_name";
 
@@ -70,11 +70,11 @@ namespace neuron {
 #else
 // define neuron::detail::create_win32_platform as a runtime error
 
-#include <memory>
 #include "neuron/platform/generic.hpp"
+#include <memory>
 #include <stdexcept>
 
-namespace neuron::detail {
+namespace neuron::synapse::detail {
     std::unique_ptr<Platform> create_win32_platform() {
         throw std::runtime_error("Win32 platform can only be created in Windows.");
     }

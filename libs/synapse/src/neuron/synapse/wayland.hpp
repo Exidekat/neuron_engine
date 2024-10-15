@@ -1,9 +1,9 @@
 #pragma once
 #ifdef __unix__
 #include "linux.hpp"
-#include "neuron/pre.hpp"
+#include "neuron/synapse/pre.hpp"
 
-namespace neuron {
+namespace neuron::synapse {
     class NEURON_API WaylandPlatform final : public LinuxPlatform {
       public:
         WaylandPlatform();

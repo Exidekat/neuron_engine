@@ -1,12 +1,16 @@
 #pragma once
 #ifdef WIN32
+#ifdef UNICODE
+#undef UNICODE
+#endif
+
 #include "generic.hpp"
-#include "neuron/pre.hpp"
+#include "neuron/synapse/pre.hpp"
 
 #include <Windows.h>
 #include <unordered_set>
 
-namespace neuron {
+namespace neuron::synapse {
     class Win32Window;
 
     class NEURON_API Win32Platform final : public Platform {

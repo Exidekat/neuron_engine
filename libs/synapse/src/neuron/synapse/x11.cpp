@@ -9,7 +9,7 @@
 
 #include <X11/XKBlib.h>
 
-namespace neuron {
+namespace neuron::synapse {
     inline X11Platform *_get_platform() {
         return dynamic_cast<X11Platform *>(Platform::get().get());
     }

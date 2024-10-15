@@ -9,7 +9,7 @@
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrandr.h>
 
-namespace neuron {
+namespace neuron::synapse {
     class X11Window;
 
     class NEURON_API X11Platform final : public LinuxPlatform {

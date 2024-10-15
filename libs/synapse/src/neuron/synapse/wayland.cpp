@@ -1,7 +1,7 @@
 #ifdef __unix__
 #include "wayland.hpp"
 
-namespace neuron {
+namespace neuron::synapse {
 
     WaylandPlatform::WaylandPlatform() = default;
 

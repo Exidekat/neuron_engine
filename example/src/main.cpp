@@ -1,16 +1,17 @@
-#include "neuron/neuron.hpp"
-#include "neuron/platform/generic.hpp"
+#include "neuron/synapse/generic.hpp"
 
 #include <iostream>
 #include <ostream>
 
 #include <chrono>
 
+namespace synapse = neuron::synapse;
+
 void run() {
-    const auto window = neuron::Window::create(neuron::WindowDescription{
+    const auto window = synapse::Window::create(synapse::WindowDescription{
         .title     = "Hello!",
         .size      = {800, 600},
-        .placement = neuron::WindowCenterMonitor{0},
+        .placement = synapse::WindowCenterMonitor{0},
         .resizable = false,
     });
 
@@ -22,11 +23,11 @@ void run() {
         std::cout << "Close" << std::endl;
     });
 
-    window.lock()->set_on_key_pressed([](const neuron::KeyCode keycode, const neuron::KeyMods &mods, const unsigned int scancode, const bool is_repeat) {
+    window.lock()->set_on_key_pressed([](const synapse::KeyCode keycode, const synapse::KeyMods &mods, const unsigned int scancode, const bool is_repeat) {
         std::cout << std::hex << static_cast<uint16_t>(keycode) << std::dec << " -- " << is_repeat << std::endl;
     });
 
-    window.lock()->set_on_key_released([window](const neuron::KeyCode keycode, const neuron::KeyMods& mods, const unsigned int scancode) {
+    window.lock()->set_on_key_released([window](const synapse::KeyCode keycode, const synapse::KeyMods& mods, const unsigned int scancode) {
         if (keycode == neuron::KeyCode::Escape && mods.control) {
             window.lock()->trigger_close();
         }
@@ -40,8 +41,8 @@ void run() {
     duration delta_time(1.0 / 60.0);
     time_point last_frame = this_frame - delta_time;
 
-    while (neuron::Platform::get()->get_window_count()) {
-        neuron::Platform::get()->step_event_loop();
+    while (synapse::Platform::get()->get_window_count()) {
+        synapse::Platform::get()->step_event_loop();
 
         last_frame = this_frame;
         while ((clock::now() - last_frame).count() < 1.0 / 60.0) { (void)0; }
@@ -52,11 +53,11 @@ void run() {
 
 int main() {
     try {
-        neuron::Platform::init();
+        synapse::Platform::init();
 
         run();
 
-        neuron::Platform::cleanup();
+        synapse::Platform::cleanup();
     } catch (const std::exception &e) {
         std::cerr << e.what() << std::endl;
         return EXIT_FAILURE;

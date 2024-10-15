@@ -1,7 +1,7 @@
 #pragma once
 #include "generic.hpp"
 #ifdef __unix__
-namespace neuron {
+namespace neuron::synapse {
     class NEURON_API LinuxPlatform : public Platform {
     protected:
         LinuxPlatform();

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "neuron/pre.hpp"
-#include "neuron/utils.hpp"
+#include "neuron/synapse/pre.hpp"
+#include "neuron/stem/utils.hpp"
 
 #include <functional>
 #include <memory>
@@ -34,7 +34,7 @@
                                                                                                                                                                                    \
   public:
 
-namespace neuron {
+namespace neuron::synapse {
     class Window;
 
     // most significant byte is used to diff between keys with pure ascii representation and those without (i.e. control keys like LeftControl, Home) as well as between numbers and

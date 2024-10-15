@@ -1,6 +1,6 @@
 #include "generic.hpp"
 
-namespace neuron {
+namespace neuron::synapse {
     namespace detail {
         std::unique_ptr<Platform> platform;
 
