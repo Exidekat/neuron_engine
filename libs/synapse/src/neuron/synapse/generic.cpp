@@ -16,7 +16,7 @@ namespace neuron::synapse {
     void Platform::init() {
 #if defined(__APPLE__)
         detail::platform = detail::create_macos_platform();
-#elif defined(__LINUX__)
+#elif defined(__linux__)
         detail::platform = detail::create_linux_platform();
 #elif defined(WIN32) || defined(_WIN32)
         detail::platform = detail::create_win32_platform();

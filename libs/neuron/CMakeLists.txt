@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.29)
 project(neuron VERSION 0.2.0)
 
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
+
 add_library(neuron src/neuron/neuron.cpp)
 target_include_directories(neuron PUBLIC src/)
 target_link_libraries(neuron PUBLIC neuron::occipital neuron::stem neuron::synapse)

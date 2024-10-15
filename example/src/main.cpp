@@ -28,7 +28,7 @@ void run() {
     });
 
     window.lock()->set_on_key_released([window](const synapse::KeyCode keycode, const synapse::KeyMods& mods, const unsigned int scancode) {
-        if (keycode == neuron::KeyCode::Escape && mods.control) {
+        if (keycode == synapse::KeyCode::Escape && mods.control) {
             window.lock()->trigger_close();
         }
     });

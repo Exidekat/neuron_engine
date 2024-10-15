@@ -1,4 +1,4 @@
-#ifdef __unix__
+#ifdef __linux__
 #include "linux.hpp"
 #include "x11.hpp"
 #include "wayland.hpp"
@@ -6,7 +6,7 @@
 #include <cstdlib>
 #include <cstring>
 
-namespace neuron {
+namespace neuron::synapse {
     namespace detail {
         std::unique_ptr<Platform> create_linux_platform() {
             const char *session_type = getenv("XDG_SESSION_TYPE");
@@ -34,7 +34,7 @@ namespace neuron {
 #else
 
 #include <memory>
-#include "neuron/platform/generic.hpp"
+#include "neuron/synapse/generic.hpp"
 #include <stdexcept>
 
 namespace neuron::synapse::detail {

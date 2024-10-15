@@ -1,5 +1,5 @@
 #include <cstring>
-#ifdef __unix__
+#ifdef __linux__
 #include "x11.hpp"
 
 #include <glm/gtx/string_cast.hpp>

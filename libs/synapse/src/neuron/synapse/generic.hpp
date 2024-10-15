@@ -222,7 +222,7 @@ namespace neuron::synapse {
         bool resizable;
     };
 
-    class NEURON_API Platform {
+    class SYNAPSE_API Platform {
       public:
         virtual ~Platform() = default;
 
@@ -238,7 +238,7 @@ namespace neuron::synapse {
         static void cleanup();
     };
 
-    class NEURON_API Window : public std::enable_shared_from_this<Window> {
+    class SYNAPSE_API Window : public std::enable_shared_from_this<Window> {
       protected:
         Window(/* TODO: does anything need to be here */);
 

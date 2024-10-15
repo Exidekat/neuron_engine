@@ -70,7 +70,7 @@ namespace neuron::synapse {
 #else
 // define neuron::detail::create_win32_platform as a runtime error
 
-#include "neuron/platform/generic.hpp"
+#include "neuron/synapse/generic.hpp"
 #include <memory>
 #include <stdexcept>
 

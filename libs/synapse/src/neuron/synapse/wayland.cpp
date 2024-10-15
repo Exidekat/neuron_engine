@@ -1,4 +1,4 @@
-#ifdef __unix__
+#ifdef __linux__
 #include "wayland.hpp"
 
 namespace neuron::synapse {

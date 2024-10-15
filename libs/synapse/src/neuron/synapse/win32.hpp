@@ -13,7 +13,7 @@
 namespace neuron::synapse {
     class Win32Window;
 
-    class NEURON_API Win32Platform final : public Platform {
+    class SYNAPSE_API Win32Platform final : public Platform {
       public:
          Win32Platform();
         ~Win32Platform() override;
@@ -33,7 +33,7 @@ namespace neuron::synapse {
         std::unordered_map<HWND, std::shared_ptr<Win32Window>> m_window_map;
     };
 
-    class NEURON_API Win32Window final : public Window {
+    class SYNAPSE_API Win32Window final : public Window {
         friend class Win32Platform;
         explicit Win32Window(const WindowDescription &description);
 

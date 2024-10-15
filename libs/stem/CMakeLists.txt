@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.29)
 project(neuron_stem VERSION 0.2.0)
 
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
+
 include(FetchContent)
 
 # glm must be built as a static library.

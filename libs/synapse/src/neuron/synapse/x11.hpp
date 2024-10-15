@@ -1,5 +1,5 @@
 #pragma once
-#ifdef __unix__
+#ifdef __linux__
 #include "linux.hpp"
 
 #include <unordered_map>
@@ -12,7 +12,7 @@
 namespace neuron::synapse {
     class X11Window;
 
-    class NEURON_API X11Platform final : public LinuxPlatform {
+    class SYNAPSE_API X11Platform final : public LinuxPlatform {
       public:
          X11Platform();
         ~X11Platform() override;
@@ -105,7 +105,7 @@ namespace neuron::synapse {
         void _update_screen_resources();
     };
 
-    class NEURON_API X11Window final : public Window {
+    class SYNAPSE_API X11Window final : public Window {
         friend class X11Platform;
         explicit X11Window(const WindowDescription &description);
 

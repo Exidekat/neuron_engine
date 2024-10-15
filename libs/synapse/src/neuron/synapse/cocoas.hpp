@@ -8,10 +8,10 @@
 
 #import <Cocoa/Cocoa.h>
 
-namespace neuron {
+namespace neuron::synapse {
     class CocoaWindow;
 
-    class NEURON_API CocoaPlatform final : public MacOSPlatform {
+    class SYNAPSE_API CocoaPlatform final : public MacOSPlatform {
       public:
         CocoaPlatform();
         ~CocoaPlatform() override;
@@ -29,7 +29,7 @@ namespace neuron {
         std::unordered_map<NSWindow *, std::shared_ptr<CocoaWindow>> m_window_map;
     };
 
-    class NEURON_API CocoaWindow final : public Window {
+    class SYNAPSE_API CocoaWindow final : public Window {
       public:
         explicit CocoaWindow(const WindowDescription &description);
         ~CocoaWindow() override;
