@@ -167,3 +167,20 @@ fabric.properties
 
 /compile_commands.json
 /build/
+
+.idea/codeStyles*
+
+.cmake*
+Testing*
+cfi/neuron/cfg.hpp
+Makefile
+neuron.cbp
+cmake_install.cmake
+CMakeCache.txt
+CMakeFiles*
+
+example/cmake_install.cmake
+example/Makefile
+example/CMakeFiles*
+example/example
+_deps

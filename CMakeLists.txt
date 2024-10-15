@@ -18,7 +18,11 @@ FetchContent_MakeAvailable(glm)
 set(BUILD_SHARED_LIBS ${O_BSL})
 unset(O_BSL)
 
-file(GLOB_RECURSE SRCS CONFIGURE_DEPENDS src/*.c src/*.cpp src/*.cxx src/*.s src/*.cc)
+if (APPLE)
+    file(GLOB_RECURSE SRCS CONFIGURE_DEPENDS src/*.c src/*.cpp src/*.cxx src/*.s src/*.cc src/*.mm)
+else ()
+    file(GLOB_RECURSE SRCS CONFIGURE_DEPENDS src/*.c src/*.cpp src/*.cxx src/*.s src/*.cc)
+endif ()
 
 file(GLOB_RECURSE CFG_FILE_INPUTS CONFIGURE_DEPENDS cfi/*.in)
 
@@ -34,14 +38,18 @@ target_include_directories(neuron PUBLIC src/) # TODO: consider using an include
 target_include_directories(neuron PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/cfi)
 target_link_libraries(neuron PUBLIC glm::glm)
 target_compile_definitions(neuron PUBLIC -DGLM_ENABLE_EXPERIMENTAL)
+target_compile_definitions(neuron PUBLIC GLM_ENABLE_EXPERIMENTAL)
 
-if (UNIX)
+# Link platform-specific libraries
+if(APPLE)
+    target_link_libraries(neuron PUBLIC "-framework Cocoa" "-framework IOKit" "-framework CoreFoundation")
+elseif(LINUX)
     target_link_libraries(neuron PUBLIC X11 Xrandr Xinerama Xi Xcursor)
 elseif(WIN32)
     target_link_libraries(neuron PUBLIC Dwmapi)
 endif()
 
-find_package(Vulkan REQUIRED) 
+find_package(Vulkan REQUIRED)
 
 target_link_libraries(neuron PUBLIC Vulkan::Vulkan)
 

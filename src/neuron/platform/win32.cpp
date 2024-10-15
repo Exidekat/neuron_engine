@@ -70,6 +70,10 @@ namespace neuron {
 #else
 // define neuron::detail::create_win32_platform as a runtime error
 
+#include <memory>
+#include "neuron/platform/generic.hpp"
+#include <stdexcept>
+
 namespace neuron::detail {
     std::unique_ptr<Platform> create_win32_platform() {
         throw std::runtime_error("Win32 platform can only be created in Windows.");
