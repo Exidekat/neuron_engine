@@ -14,3 +14,7 @@
 #else
 # define NEURON_API
 #endif
+
+#ifdef UNICODE
+#undef UNICODE
+#endif

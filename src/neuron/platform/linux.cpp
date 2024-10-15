@@ -33,6 +33,10 @@ namespace neuron {
 
 #else
 
+#include <memory>
+#include "neuron/platform/generic.hpp"
+#include <stdexcept>
+
 namespace neuron::detail {
     std::unique_ptr<Platform> create_linux_platform() {
         throw std::runtime_error("Linux platform can only be created on Linux.");
