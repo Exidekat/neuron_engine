@@ -1,7 +1,8 @@
 #ifdef __APPLE__
 #include "cocoas.hpp"
 
-namespace neuron {
+namespace neuron::synapse {
+
     CocoaPlatform::CocoaPlatform() {
         m_app = [NSApplication sharedApplication];
         [m_app setActivationPolicy:NSApplicationActivationPolicyRegular];
@@ -61,5 +62,6 @@ namespace neuron {
     void CocoaWindow::trigger_close() {
         [m_window performClose:nil];
     }
+
 } // namespace neuron
 #endif

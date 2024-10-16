@@ -14,7 +14,7 @@ add_library(neuron_synapse src/neuron/synapse/generic.cpp src/neuron/synapse/gen
         src/neuron/synapse/macos.cpp src/neuron/synapse/macos.hpp)
 
 if (APPLE)
-    target_sources(neuron_synapse src/neuron/synapse/cocoas.mm src/neuron/synapse/macos.mm)
+    target_sources(neuron_synapse PUBLIC src/neuron/synapse/cocoas.mm src/neuron/synapse/macos.mm)
 endif()
 
 target_include_directories(neuron_synapse PUBLIC src/)
